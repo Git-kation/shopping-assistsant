@@ -3,7 +3,7 @@ import os
 token = os.getenv("IAM_TOKEN")
 
 
-sdk = YCloudML(folder_id="b1g22egbsi0qsn7tv05p", auth=os.getenv("IAM_TOKEN"))
+sdk = YCloudML(folder_id="b1g22egbsi0qsn7tv05p", auth=token)
 # sdk.setup_default_logging("ERROR")
 
 model = sdk.models.completions("yandexgpt")
@@ -15,15 +15,15 @@ with open("catalogue.json", "r",  encoding = 'utf-8') as f:
 
 
 def prepare_catalogue(c):
-    s=''
+    s=[]
     for i in c:
-        s += i.get("name") + " (" + str(i.get("price")) + ' рублей/шт, '
+        s.append(i.get("name") + " (" + str(i.get("price")) + ' рублей/шт, ')
         if "country" in i:
-            s += 'страна-поставщик: ' + i.get("country") + ", "
+            s.append('страна-поставщик: ' + i.get("country") + ", ")
         if "weight" in i:
-            s += str(i.get("weight")) + " грамм - вес" 
-        s += '); '
-    return s
+            s.append(str(i.get("weight")) + " грамм - вес")
+        s.append('); ')
+    return ''.join(s)
 
 string= prepare_catalogue(catalogue)
 
@@ -63,7 +63,7 @@ while a!='выход':
 
 
 messages.append({"role":"user",
-            "text": "выведи только товары из моей корзины в столбик с количеством. если она пуста, просто сакажи это. на следующей строчке напиши сумму корзины числом"})
+            "text": "выведи только товары из моей корзины в столбик с количеством. если она пуста, просто скажи это. на следующей строчке напиши сумму корзины числом"})
 result = model.run(messages)
 answer=result[0].text
 print('Вот ваша корзина:')
